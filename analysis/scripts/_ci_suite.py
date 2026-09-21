@@ -50,6 +50,16 @@ def main() -> int:
     print("CI suite - the checks a clone can run (figures and raw data are not in git)\n")
     failed = []
     for label, argv, evidence in CHECKS:
+        # A CHECK WHOSE SCRIPT IS NOT HERE HAS NOT FAILED. The skeleton
+        # published at github.com/BigKahuna26/jarvis-lab-notebook ships this
+        # suite without the experiment-specific verifiers, and a fresh clone
+        # went red on its first run for reasons that were not defects - which
+        # is the fastest way to teach someone that red means nothing. Same
+        # contract as --no-figures: skipped, and said out loud.
+        if not (HERE / argv[0]).exists():
+            print(f"[skip] {label}")
+            print(f"       {argv[0]} is not in this checkout — nothing to run\n")
+            continue
         r = subprocess.run([sys.executable, str(HERE / argv[0])] + argv[1:],
                            cwd=str(HERE), capture_output=True, text=True)
         out = (r.stdout + r.stderr).strip()
