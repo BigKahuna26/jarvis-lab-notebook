@@ -45,13 +45,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: pip
-          cache-dependency-path: analysis/scripts/requirements-ci.txt
 
-      # The list is pinned in a file and was derived by running the suite in a
-      # clean venv, not by reading imports - see the comment at the top of it.
-      - name: Install
-        run: pip install --quiet -r analysis/scripts/requirements-ci.txt
+      # NO INSTALL STEP. The checks in this repository are pure standard
+      # library - json, re, subprocess, pathlib. The vault this was extracted
+      # from also runs verifiers built on numpy/pandas/scipy/matplotlib; those
+      # scripts are part of the research and are not here, and _ci_suite.py
+      # skips any check whose script is absent.
 
       - name: Run the clone-runnable checks
         id: verify

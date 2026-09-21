@@ -18,6 +18,7 @@ to what the protocol claims.
 
     python3 _document_standards_check.py
 """
+from __future__ import annotations   # macOS still ships 3.9 as /usr/bin/python3
 import json
 import re
 import subprocess
