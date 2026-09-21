@@ -1,0 +1,10 @@
+{
+  "id": "jarvis-command-center",
+  "name": "Jarvis Command Center",
+  "version": "0.1.0",
+  "minAppVersion": "1.0.0",
+  "description": "Personal lab command center \u2014 experiments, deadlines, cell cultures, token usage, figure and text annotation, and share-ready PDF export.",
+  "author": "Trenton Campos",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

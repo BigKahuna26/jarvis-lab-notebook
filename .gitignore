@@ -1,0 +1,125 @@
+# Claude Code. NOTE the trailing /* — with a bare `.claude/` git never descends
+# into the directory, so the negation below could never match (the same trap as
+# .obsidian/plugins/ and analysis/codex_bridge/ further down). Excluding the
+# CONTENTS instead leaves the directory traversable.
+#
+# CLAUDE.md is tracked because nothing else was keeping it. `.claude/` contains
+# a clone of kepano/obsidian-skills, which is where "managed by its own git
+# repo" came from — but CLAUDE.md is untracked in that clone and its remote is
+# someone else's repository, so the instruction file governing this vault had
+# no history and no backup at all. It is the one file in here that is ours,
+# hand-written, and irreplaceable.
+#
+# Everything else stays out, and the exclusion is what keeps it out: API keys in
+# settings.local.json, the spend ledger, and the review histories under
+# codex-review/, third-opinion/ and tribunal/.
+# The negation that was here did not work and made things worse: `.claude/.git`
+# is a repository boundary, so `git add .claude/CLAUDE.md` exits 0 and stages
+# nothing, while `git add -A` stages `.claude` itself as an embedded-repo
+# gitlink. The instructions are mirrored to analysis/vault-instructions.md by
+# analysis/scripts/mirror_claude_md.sh instead.
+.claude/
+
+# Obsidian — plugin binaries and personal workspace state
+# NOTE the trailing /* — with a bare `.obsidian/plugins/` git never descends into
+# the directory, so the negations below can never match. Excluding the CONTENTS
+# instead leaves the directory traversable.
+.obsidian/plugins/*
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# ...except the Jarvis Command Center source, which is hand-written code, not a
+# downloaded binary. Tracking it gives it real version history (it previously
+# existed only as _jcc_backup_pre_*.js copies) and makes it visible to
+# `/codex:review`, which is git-scoped and could not see it otherwise.
+!.obsidian/plugins/jarvis-command-center/
+!.obsidian/plugins/jarvis-command-center/main.js
+!.obsidian/plugins/jarvis-command-center/styles.css
+!.obsidian/plugins/jarvis-command-center/manifest.json
+!.obsidian/plugins/jarvis-command-center/tribunal.png
+# The hand-made rollback copies stay out — they are snapshots of main.js, and
+# git is the thing that replaces them.
+.obsidian/plugins/jarvis-command-center/_jcc_backup_*
+
+# Sensitive files
+Zotero API Key.md
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude Code — local settings contain API keys
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv/
+
+# Raw experimental data — too large for git
+data/raw/
+*.fcs
+*.fastq
+*.fastq.gz
+*.bam
+*.sam
+*.bai
+
+# Generated outputs — reproducible from scripts
+data/figures/
+deadlines/lab-deadlines.ics
+
+# Jupyter
+.ipynb_checkpoints/
+
+# R
+.Rhistory
+.Rdata
+
+# Large sequence files
+*.ab1
+*.abi
+
+# Codex bridge queue. Logs, the live inbox and the pidfile are transient. The
+# REPLIES and the PROMPTS THAT PRODUCED THEM are review records and stay tracked:
+# a findings file without its brief cannot be audited, because the brief decides
+# what Codex looks for. NOTE the trailing /* - git will not descend into a
+# directory excluded as `analysis/codex_bridge/`, so the negations below could never match
+# (the same trap as .obsidian/plugins/ above).
+analysis/codex_bridge/*
+!analysis/codex_bridge/outbox/
+analysis/codex_bridge/outbox/*
+!analysis/codex_bridge/outbox/*.reply.md
+!analysis/codex_bridge/outbox/*.meta.json
+!analysis/codex_bridge/processed/
+analysis/codex_bridge/processed/*
+!analysis/codex_bridge/processed/*.md
+
+# Vault semantic index — 20 MB of regenerable binary that churns on every
+# rebuild. Two cents to recreate: embed_vault.py build --yes
+data/derived/vault_index/
+
+# Word exports. The markdown beside them is the source; a .docx is a zip, so
+# every version git stores is ~40 KB of opaque blob that `git diff` can only
+# call "binary files differ" - which is the exact thing the
+# markdown-is-canonical rule exists to prevent. Regenerate instead:
+# analysis/scripts/md_to_docx.py <the .md>. Marked-up copies coming BACK are
+# read with analysis/scripts/ingest_docx_comments.py, which writes the comments
+# into a tracked markdown note - so the reviewer's edits keep their history
+# while the binary does not.
+#
+# NOTE this ignores nothing already tracked: git only consults .gitignore for
+# UNtracked paths. Two files in fellowships/hertz-2026/drafts/ stay tracked on
+# purpose, because neither can be rebuilt from anything in the vault - the
+# received prompt document `a received prompt document`, and
+# `an export whose markdown was never committed`, whose markdown was never committed. An
+# irreplaceable document belongs in git even when it is a blob.
+fellowships/**/drafts/*.docx
+proposals/**/drafts/*.docx
+
+# ...except an ORIGINAL: a document written in Word first, whose markdown was
+# converted OUT of it rather than exported INTO it. Deleting one loses work that
+# no script can rebuild, so it is tracked despite being a blob — the same
